@@ -1,0 +1,31 @@
+{
+  "name": "moonlight",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mohanish2127-jpg/moonlight.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/mohanish2127-jpg/moonlight/issues"
+  },
+  "homepage": "https://github.com/mohanish2127-jpg/moonlight#readme",
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^17.3.0",
+    "prettier": "^3.9.6"
+  },
+  "lint-staged": {
+  "client/src/**/*.{ts,tsx}": ["prettier --write"],
+  "server/src/**/*.ts": ["prettier --write", "eslint --fix"]
+}
+}
