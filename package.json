@@ -20,12 +20,21 @@
   },
   "homepage": "https://github.com/mohanish2127-jpg/moonlight#readme",
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
     "husky": "^9.1.7",
     "lint-staged": "^17.3.0",
     "prettier": "^3.9.6"
   },
   "lint-staged": {
-  "client/src/**/*.{ts,tsx}": ["prettier --write"],
-  "server/src/**/*.ts": ["prettier --write", "eslint --fix"]
-}
+    "client/src/**/*.{ts,tsx}": [
+      "prettier --write"
+    ],
+    "server/src/**/*.ts": [
+      "prettier --write",
+      "eslint --fix"
+    ]
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3"
+  }
 }
