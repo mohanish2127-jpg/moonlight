@@ -4,7 +4,25 @@ import { sendSuccess } from '../utils/apiResponse'
 import { refreshAccessToken } from '../services/authService'
 import { UnauthorizedError } from '../utils/apiError'
 import { verifyUserEmail } from '../services/authService'
+import { forgotPassword, resetPassword } from '../services/authService'
 
+export async function forgotPasswordHandler(req: Request, res: Response, next: NextFunction) {
+  try {
+    const result = await forgotPassword(req.body)
+    sendSuccess(res, 200, result, result.message)
+  } catch (err) {
+    next(err)
+  }
+}
+
+export async function resetPasswordHandler(req: Request, res: Response, next: NextFunction) {
+  try {
+    const result = await resetPassword(req.body)
+    sendSuccess(res, 200, result, result.message)
+  } catch (err) {
+    next(err)
+  }
+}
 export async function verifyEmail(req: Request, res: Response, next: NextFunction) {
   try {
     const { token } = req.query

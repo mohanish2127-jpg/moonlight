@@ -7,10 +7,16 @@ import {
   verifyRefreshToken,
   generateEmailVerificationToken,
   verifyEmailVerificationToken,
+  generatePasswordResetToken,
+  verifyPasswordResetToken,
 } from '../utils/jwt'
-import { sendVerificationEmail } from '../utils/email'
-import type { RegisterInput, LoginInput } from '../validators/authValidators'
-
+import { sendVerificationEmail, sendPasswordResetEmail } from '../utils/email'
+import type {
+  RegisterInput,
+  LoginInput,
+  ForgotPasswordInput,
+  ResetPasswordInput,
+} from '../validators/authValidators'
 export async function registerUser(input: RegisterInput) {
   const existingUser = await prisma.user.findUnique({ where: { email: input.email } })
 
@@ -97,4 +103,35 @@ export async function verifyUserEmail(token: string) {
   })
 
   return { email: user.email }
+}
+export async function forgotPassword(input: ForgotPasswordInput) {
+  const user = await prisma.user.findUnique({ where: { email: input.email } })
+
+  // Always return success even if user doesn't exist — prevents email enumeration attacks
+  if (!user) {
+    return { message: 'If an account exists, a reset link has been sent' }
+  }
+
+  const resetToken = generatePasswordResetToken(user.id)
+  await sendPasswordResetEmail(user.email, user.name, resetToken)
+
+  return { message: 'If an account exists, a reset link has been sent' }
+}
+
+export async function resetPassword(input: ResetPasswordInput) {
+  let payload
+  try {
+    payload = verifyPasswordResetToken(input.token)
+  } catch {
+    throw new UnauthorizedError('Invalid or expired reset link')
+  }
+
+  const hashedPassword = await bcrypt.hash(input.newPassword, 10)
+
+  await prisma.user.update({
+    where: { id: payload.userId },
+    data: { password: hashedPassword },
+  })
+
+  return { message: 'Password reset successfully' }
 }

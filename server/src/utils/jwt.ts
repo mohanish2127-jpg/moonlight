@@ -32,3 +32,11 @@ export function generateEmailVerificationToken(userId: string): string {
 export function verifyEmailVerificationToken(token: string): { userId: string } {
   return jwt.verify(token, process.env.JWT_EMAIL_SECRET as string) as { userId: string }
 }
+
+export function generatePasswordResetToken(userId: string): string {
+  return jwt.sign({ userId }, process.env.JWT_EMAIL_SECRET as string, { expiresIn: '1h' })
+}
+
+export function verifyPasswordResetToken(token: string): { userId: string } {
+  return jwt.verify(token, process.env.JWT_EMAIL_SECRET as string) as { userId: string }
+}

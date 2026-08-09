@@ -25,3 +25,29 @@ export async function sendVerificationEmail(to: string, name: string, token: str
     `,
   })
 }
+
+export async function sendPasswordResetEmail(to: string, name: string, token: string) {
+  const resetUrl = `${process.env.CLIENT_URL}/reset-password?token=${token}`
+
+  if (process.env.NODE_ENV !== 'production') {
+    console.log('\n🔑 [DEV] Password reset email would be sent to:', to)
+    console.log('🔗 [DEV] Reset link:', resetUrl, '\n')
+    return
+  }
+
+  await transporter.sendMail({
+    from: process.env.EMAIL_FROM,
+    to,
+    subject: 'Reset your MoonlightAnime password',
+    html: `
+      <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto;">
+        <h2 style="color: #7c3aed;">Password Reset Request</h2>
+        <p>Hi ${name}, we received a request to reset your password.</p>
+        <a href="${resetUrl}" style="display: inline-block; padding: 12px 24px; background: #7c3aed; color: white; text-decoration: none; border-radius: 6px; margin: 16px 0;">
+          Reset Password
+        </a>
+        <p style="color: #888; font-size: 14px;">This link expires in 1 hour. If you didn't request this, you can safely ignore this email.</p>
+      </div>
+    `,
+  })
+}
