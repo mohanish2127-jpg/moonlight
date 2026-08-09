@@ -6,6 +6,7 @@ import {
   verifyEmail,
   forgotPasswordHandler,
   resetPasswordHandler,
+  googleAuthHandler,
 } from '../controllers/authController'
 import { validateRequest } from '../middleware/validateRequest'
 import {
@@ -23,5 +24,6 @@ router.post('/login', validateRequest(loginSchema), login)
 router.post('/refresh', refresh)
 router.post('/forgot-password', validateRequest(forgotPasswordSchema), forgotPasswordHandler)
 router.post('/reset-password', validateRequest(resetPasswordSchema), resetPasswordHandler)
+router.post('/google', googleAuthHandler)
 
 export default router

@@ -5,7 +5,21 @@ import { refreshAccessToken } from '../services/authService'
 import { UnauthorizedError } from '../utils/apiError'
 import { verifyUserEmail } from '../services/authService'
 import { forgotPassword, resetPassword } from '../services/authService'
+import { googleAuth } from '../services/authService'
 
+export async function googleAuthHandler(req: Request, res: Response, next: NextFunction) {
+  try {
+    const { idToken } = req.body
+    if (!idToken) {
+      throw new UnauthorizedError('Google ID token is required')
+    }
+    const { user, accessToken, refreshToken } = await googleAuth(idToken)
+    res.cookie('refreshToken', refreshToken, REFRESH_COOKIE_OPTIONS)
+    sendSuccess(res, 200, { user, accessToken }, 'Google authentication successful')
+  } catch (err) {
+    next(err)
+  }
+}
 export async function forgotPasswordHandler(req: Request, res: Response, next: NextFunction) {
   try {
     const result = await forgotPassword(req.body)

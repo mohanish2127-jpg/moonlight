@@ -1,4 +1,5 @@
 import bcrypt from 'bcryptjs'
+import { OAuth2Client } from 'google-auth-library'
 import prisma from '../config/prisma'
 import { ConflictError, UnauthorizedError } from '../utils/apiError'
 import {
@@ -17,6 +18,9 @@ import type {
   ForgotPasswordInput,
   ResetPasswordInput,
 } from '../validators/authValidators'
+
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
+
 export async function registerUser(input: RegisterInput) {
   const existingUser = await prisma.user.findUnique({ where: { email: input.email } })
 
@@ -50,7 +54,7 @@ export async function registerUser(input: RegisterInput) {
 export async function loginUser(input: LoginInput) {
   const user = await prisma.user.findUnique({ where: { email: input.email } })
 
-  if (!user) {
+  if (!user || !user.password) {
     throw new UnauthorizedError('Invalid email or password')
   }
 
@@ -104,6 +108,7 @@ export async function verifyUserEmail(token: string) {
 
   return { email: user.email }
 }
+
 export async function forgotPassword(input: ForgotPasswordInput) {
   const user = await prisma.user.findUnique({ where: { email: input.email } })
 
@@ -134,4 +139,45 @@ export async function resetPassword(input: ResetPasswordInput) {
   })
 
   return { message: 'Password reset successfully' }
+}
+
+export async function googleAuth(idToken: string) {
+  const ticket = await googleClient.verifyIdToken({
+    idToken,
+    audience: process.env.GOOGLE_CLIENT_ID,
+  })
+
+  const payload = ticket.getPayload()
+
+  if (!payload || !payload.email) {
+    throw new UnauthorizedError('Invalid Google token')
+  }
+
+  let user = await prisma.user.findUnique({ where: { email: payload.email } })
+
+  if (!user) {
+    user = await prisma.user.create({
+      data: {
+        email: payload.email,
+        name: payload.name || payload.email.split('@')[0],
+        googleId: payload.sub,
+        avatar: payload.picture,
+        isVerified: true,
+      },
+    })
+  } else if (!user.googleId) {
+    user = await prisma.user.update({
+      where: { id: user.id },
+      data: { googleId: payload.sub },
+    })
+  }
+
+  const accessToken = generateAccessToken({ userId: user.id, role: user.role })
+  const refreshToken = generateRefreshToken({ userId: user.id, role: user.role })
+
+  return {
+    user: { id: user.id, name: user.name, email: user.email, role: user.role },
+    accessToken,
+    refreshToken,
+  }
 }
