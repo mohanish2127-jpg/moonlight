@@ -7,6 +7,7 @@ import pinoHttp from 'pino-http'
 import dotenv from 'dotenv'
 import { errorHandler, notFoundHandler } from './middleware/errorHandler'
 import { loggerOptions } from './config/logger'
+import authRoutes from './routes/authRoutes'
 
 dotenv.config()
 
@@ -27,6 +28,7 @@ app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', message: 'MoonlightAnime API is running' })
 })
 
+app.use('/api/auth', authRoutes)
 app.use(notFoundHandler)
 app.use(errorHandler)
 
