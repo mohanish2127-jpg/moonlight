@@ -15,7 +15,8 @@ import {
   forgotPasswordSchema,
   resetPasswordSchema,
 } from '../validators/authValidators'
-
+import { authenticate } from '../middleware/authenticate'
+import { getMe } from '../controllers/authController' // add getMe to the existing import instead of a new line
 const router = Router()
 
 router.get('/verify-email', verifyEmail)
@@ -25,5 +26,5 @@ router.post('/refresh', refresh)
 router.post('/forgot-password', validateRequest(forgotPasswordSchema), forgotPasswordHandler)
 router.post('/reset-password', validateRequest(resetPasswordSchema), resetPasswordHandler)
 router.post('/google', googleAuthHandler)
-
+router.get('/me', authenticate, getMe)
 export default router

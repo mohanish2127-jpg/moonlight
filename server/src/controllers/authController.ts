@@ -6,7 +6,20 @@ import { UnauthorizedError } from '../utils/apiError'
 import { verifyUserEmail } from '../services/authService'
 import { forgotPassword, resetPassword } from '../services/authService'
 import { googleAuth } from '../services/authService'
+import { AuthRequest } from '../middleware/authenticate'
+import prisma from '../config/prisma'
 
+export async function getMe(req: AuthRequest, res: Response, next: NextFunction) {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: req.user!.userId },
+      select: { id: true, name: true, email: true, role: true, isVerified: true, avatar: true },
+    })
+    sendSuccess(res, 200, user, 'User fetched successfully')
+  } catch (err) {
+    next(err)
+  }
+}
 export async function googleAuthHandler(req: Request, res: Response, next: NextFunction) {
   try {
     const { idToken } = req.body
