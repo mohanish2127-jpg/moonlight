@@ -20,8 +20,11 @@ function Login() {
 
   return (
     <div className="h-full min-h-screen flex items-center justify-center px-4 bg-moon-bg">
-      <div className="w-full max-w-sm space-y-6 bg-moon-surface border border-moon-primary/30 rounded-2xl p-8 shadow-[0_0_40px_-10px_rgba(168,85,247,0.4)]">
-        <h1 className="text-3xl font-bold text-moon-primary text-center">Login</h1>
+      <div className="w-full max-w-sm space-y-6 bg-moon-surface border border-moon-border rounded-moon p-8 shadow-glow-primary">
+        <div className="text-center space-y-1">
+          <h1 className="text-2xl font-semibold text-moon-text">Welcome back</h1>
+          <p className="text-sm text-moon-muted">Sign in to your account</p>
+        </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
@@ -32,10 +35,10 @@ function Login() {
               id="email"
               type="email"
               placeholder="you@example.com"
-              className="bg-moon-bg border-moon-primary/30 text-moon-text placeholder:text-moon-muted focus-visible:ring-moon-primary"
+              className="bg-moon-bg border-moon-border text-moon-text placeholder:text-moon-muted focus-visible:ring-moon-primary"
               {...register('email')}
             />
-            {errors.email && <p className="text-sm text-moon-accent">{errors.email.message}</p>}
+            {errors.email && <p className="text-sm text-red-400">{errors.email.message}</p>}
           </div>
 
           <div className="space-y-2">
@@ -46,12 +49,10 @@ function Login() {
               id="password"
               type="password"
               placeholder="••••••••"
-              className="bg-moon-bg border-moon-primary/30 text-moon-text placeholder:text-moon-muted focus-visible:ring-moon-primary"
+              className="bg-moon-bg border-moon-border text-moon-text placeholder:text-moon-muted focus-visible:ring-moon-primary"
               {...register('password')}
             />
-            {errors.password && (
-              <p className="text-sm text-moon-accent">{errors.password.message}</p>
-            )}
+            {errors.password && <p className="text-sm text-red-400">{errors.password.message}</p>}
           </div>
 
           <Button
@@ -59,7 +60,7 @@ function Login() {
             className="w-full bg-moon-primary hover:bg-moon-primary-light text-white"
             disabled={isSubmitting}
           >
-            {isSubmitting ? 'Logging in...' : 'Login'}
+            {isSubmitting ? 'Signing in...' : 'Sign In'}
           </Button>
         </form>
       </div>

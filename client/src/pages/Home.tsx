@@ -1,7 +1,7 @@
 function Home() {
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <h1 className="text-4xl font-bold text-purple-600">Home Page</h1>
+    <div className="min-h-screen flex items-center justify-center bg-moon-bg">
+      <h1 className="text-4xl font-semibold text-moon-text">Home Page</h1>
     </div>
   )
 }
